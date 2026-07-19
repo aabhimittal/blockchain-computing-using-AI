@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neurochain"
+version = "0.1.0"
+description = "A blockchain with AI-driven Proof-of-Useful-Intelligence consensus, adaptive difficulty, fraud detection and validator reputation."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "NeuroChain contributors" }]
+keywords = ["blockchain", "consensus", "machine-learning", "ai", "proof-of-useful-work", "reinforcement-learning"]
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2.6"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+neurochain = "neurochain.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["neurochain*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
