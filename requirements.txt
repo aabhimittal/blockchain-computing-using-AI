@@ -1,0 +1,6 @@
+# Core runtime deps. AI modules use numpy only (no heavy DL frameworks required).
+numpy>=1.24
+# Optional API server (imported lazily; not needed for core/consensus/tests).
+fastapi>=0.110
+uvicorn>=0.29
+pydantic>=2.6
