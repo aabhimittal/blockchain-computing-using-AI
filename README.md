@@ -66,7 +66,23 @@ neurochain serve --port 8000       # REST API (requires [api] extras)
 ```bash
 python -m examples.demo              # wallets, transfers, fraud, reputation, integrity
 python -m examples.simulate_network  # two nodes + useful-work fork choice
+python -m examples.advanced_features # NeuroVM, fee market, federated learning, SPV
 ```
+
+## Advanced subsystems
+
+Beyond the core ledger and consensus, NeuroChain ships four self-contained modules
+that extend it to more real-world use cases, each hardened against industrial edge
+cases (see `tests/`):
+
+| Module | What it adds | Use case |
+| --- | --- | --- |
+| `neurochain.vm` — **NeuroVM** | Deterministic, gas-metered stack machine with reverts, 256-bit wrapping arithmetic, jump-dest validation, and a standard-contract library (timelock, multisig, escrow, HTLC). | Programmable transactions / smart contracts with bounded, replayable execution. |
+| `neurochain.economics` — **FeeMarket** | EIP-1559-style base-fee controller: fees rise/fall toward a target block occupancy, with a floor and per-block change cap; priority tips bid for inclusion. | Congestion pricing and predictable fees. |
+| `neurochain.ai.federated` | Byzantine-robust aggregation of on-chain model updates — coordinate-wise trimmed mean, Krum, reputation-weighted mean — with NaN/Inf dropping and L2 norm clipping. | Decentralised (federated) model training as useful work, poison-resistant. |
+| `neurochain.core.light_client` | SPV Merkle inclusion proofs built from a block and verified against a trusted header root. | Light clients that confirm payments without downloading full blocks. |
+
+Edge cases exercised include VM out-of-gas / division-by-zero / stack under-and-overflow / invalid jumps / storage rollback on revert, fee-market clamping of malformed block sizes and floor enforcement, federated dimension mismatches and all-Byzantine batches, and SPV tampered-root and odd-leaf-count trees.
 
 ## How Proof-of-Useful-Intelligence works
 
@@ -117,13 +133,15 @@ CI runs the suite on Python 3.9 / 3.11 / 3.12 (see `.github/workflows/ci.yml`).
 
 ```
 neurochain/
-├── core/        crypto · transaction · merkle · block · blockchain · wallet
+├── core/        crypto · transaction · merkle · block · blockchain · wallet · light_client
 ├── consensus/   base interface · proof_of_useful_intelligence
-├── ai/          neural_net · adaptive_difficulty · fraud_detection · validator_reputation
+├── ai/          neural_net · adaptive_difficulty · fraud_detection · validator_reputation · federated
+├── vm/          NeuroVM stack machine · standard contract templates
+├── economics/   EIP-1559 fee market
 ├── network/     mempool · node
 ├── api/         FastAPI server (optional)
 └── cli.py
-examples/        demo · simulate_network
+examples/        demo · simulate_network · advanced_features
 tests/           pytest suite
 docs/            ALGORITHM.md · ARCHITECTURE.md
 ```
